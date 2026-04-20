@@ -1,0 +1,21 @@
+# =============================================================================
+# .dockerignore — Loại trừ các tệp không cần thiết khi build Docker image
+# =============================================================================
+
+# Git
+.git
+.gitignore
+
+# IDE / Editor
+.vscode
+.idea
+*.suo
+*.user
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db

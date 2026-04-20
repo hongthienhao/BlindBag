@@ -1,0 +1,68 @@
+# =============================================================================
+# docker-compose.yml — BlindBag Marketplace: SQL Server Service
+# =============================================================================
+# Sử dụng:
+#   docker-compose up -d          # Khởi động SQL Server
+#   docker-compose down           # Dừng và xóa container
+#   docker-compose down -v        # Dừng VÀ xóa cả volume (reset database)
+# =============================================================================
+
+version: "3.9"
+
+services:
+  # ---------------------------------------------------------------------------
+  # SQL Server 2019 (Developer Edition)
+  # ---------------------------------------------------------------------------
+  sqlserver:
+    build:
+      context: ./docker/sqlserver
+      dockerfile: Dockerfile
+    container_name: blindbag_sqlserver
+    image: blindbag-sqlserver:latest
+    restart: unless-stopped
+
+    # Port mapping: host:container
+    ports:
+      - "1433:1433"
+
+    # Environment variables (override Dockerfile defaults if needed)
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "BlindBag@SA_2024!"
+      MSSQL_PID: "Developer"
+      MSSQL_COLLATION: "SQL_Latin1_General_CP1_CI_AS"
+
+    # Named volume để dữ liệu không bị mất khi restart container
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+    # Health check: đảm bảo SQL Server đã sẵn sàng trước khi các service khác kết nối
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P 'BlindBag@SA_2024!' -Q 'SELECT 1' -No || exit 1"
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+    networks:
+      - blindbag_network
+
+# ---------------------------------------------------------------------------
+# Volumes
+# ---------------------------------------------------------------------------
+volumes:
+  sqlserver_data:
+    driver: local
+    name: blindbag_sqlserver_data
+
+# ---------------------------------------------------------------------------
+# Networks
+# ---------------------------------------------------------------------------
+networks:
+  blindbag_network:
+    driver: bridge
+    name: blindbag_network
