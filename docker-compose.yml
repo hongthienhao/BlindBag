@@ -1,67 +1,115 @@
 # =============================================================================
 # docker-compose.yml — BlindBag Marketplace: SQL Server Service
+# Task: 1.1.2 - Định nghĩa docker-compose cho SQL Server
 # =============================================================================
-# Sử dụng:
-#   docker-compose up -d          # Khởi động SQL Server
-#   docker-compose down           # Dừng và xóa container
-#   docker-compose down -v        # Dừng VÀ xóa cả volume (reset database)
+#
+# Yêu cầu trước khi chạy:
+#   1. Sao chép tệp biến môi trường:  cp .env.example .env
+#   2. Chỉnh sửa .env nếu cần thay đổi mật khẩu hoặc cổng
+#
+# Lệnh sử dụng:
+#   docker-compose up -d              # Build image và khởi động container (nền)
+#   docker-compose up --build -d      # Force rebuild image rồi khởi động
+#   docker-compose logs -f sqlserver  # Xem log realtime
+#   docker-compose ps                 # Kiểm tra trạng thái container
+#   docker-compose down               # Dừng container (giữ nguyên dữ liệu)
+#   docker-compose down -v            # Dừng VÀ xóa toàn bộ dữ liệu (reset)
 # =============================================================================
 
 version: "3.9"
 
 services:
-  # ---------------------------------------------------------------------------
-  # SQL Server 2019 (Developer Edition)
-  # ---------------------------------------------------------------------------
+
+  # ===========================================================================
+  # SQL Server 2019 — Developer Edition (Linux)
+  # ===========================================================================
   sqlserver:
+
+    # ── Build từ Dockerfile tùy chỉnh (có script khởi tạo BlindBagDb) ──────
     build:
-      context: ./docker/sqlserver
+      context: ./docker/sqlserver      # Thư mục chứa Dockerfile
       dockerfile: Dockerfile
+
+    # ── Tên image sau khi build ──────────────────────────────────────────────
+    image: blindbag-sqlserver:2019
+
+    # ── Tên container (cố định để dễ quản lý) ────────────────────────────────
     container_name: blindbag_sqlserver
-    image: blindbag-sqlserver:latest
+
+    # ── Tự động khởi động lại khi container bị crash (trừ khi dừng bằng tay) ─
     restart: unless-stopped
 
-    # Port mapping: host:container
-    ports:
-      - "1433:1433"
+    # ── Tải biến môi trường từ tệp .env ──────────────────────────────────────
+    env_file:
+      - .env
 
-    # Environment variables (override Dockerfile defaults if needed)
+    # ── Biến môi trường (khai báo tường minh — ghi đè .env nếu trùng key) ───
     environment:
+      # Bắt buộc: Chấp nhận điều khoản sử dụng của Microsoft SQL Server
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: "BlindBag@SA_2024!"
-      MSSQL_PID: "Developer"
-      MSSQL_COLLATION: "SQL_Latin1_General_CP1_CI_AS"
+      # Mật khẩu tài khoản SA — đọc từ .env
+      SA_PASSWORD: "${SA_PASSWORD}"
+      # Phiên bản SQL Server: Developer | Express | Standard | Enterprise
+      MSSQL_PID: "${MSSQL_PID}"
+      # Collation mặc định cho database (hỗ trợ tiếng Việt không dấu)
+      MSSQL_COLLATION: "${MSSQL_COLLATION}"
+      # Timezone của container
+      TZ: "Asia/Ho_Chi_Minh"
 
-    # Named volume để dữ liệu không bị mất khi restart container
+    # ── Ánh xạ cổng: [cổng máy chủ]:[cổng container] ────────────────────────
+    # Cổng mặc định SQL Server là 1433
+    # Có thể đổi cổng máy chủ trong .env (SQLSERVER_HOST_PORT) tránh xung đột
+    ports:
+      - "${SQLSERVER_HOST_PORT:-1433}:1433"
+
+    # ── Volumes: đảm bảo dữ liệu bền vững khi container restart/xóa ─────────
     volumes:
+      # Volume cố định cho dữ liệu SQL Server
       - sqlserver_data:/var/opt/mssql
 
-    # Health check: đảm bảo SQL Server đã sẵn sàng trước khi các service khác kết nối
+      # (Tuỳ chọn) Mount trực tiếp script SQL bổ sung vào thư mục entrypoint
+      # để chạy thêm migration sau này mà không cần rebuild image
+      - ./docker/sqlserver/init:/usr/src/app/init:ro
+
+    # ── Health Check: kiểm tra SQL Server sẵn sàng nhận kết nối ─────────────
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P 'BlindBag@SA_2024!' -Q 'SELECT 1' -No || exit 1"
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P \"$$SA_PASSWORD\" -Q \"SELECT 1\" -No || exit 1"
         ]
+      # Kiểm tra mỗi 15 giây
       interval: 15s
+      # Timeout mỗi lần kiểm tra
       timeout: 10s
+      # Số lần thất bại liên tiếp trước khi đánh dấu unhealthy
       retries: 5
-      start_period: 30s
+      # Thời gian chờ khởi động trước khi bắt đầu health check
+      start_period: 40s
 
+    # ── Network: cô lập trong mạng nội bộ của project ───────────────────────
     networks:
       - blindbag_network
 
-# ---------------------------------------------------------------------------
-# Volumes
-# ---------------------------------------------------------------------------
+    # ── Logging: giới hạn kích thước log tránh đầy ổ đĩa ───────────────────
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# =============================================================================
+# Volumes — Lưu trữ dữ liệu bền vững
+# =============================================================================
 volumes:
   sqlserver_data:
     driver: local
     name: blindbag_sqlserver_data
+    # Dữ liệu được lưu tại: /var/lib/docker/volumes/blindbag_sqlserver_data/_data
 
-# ---------------------------------------------------------------------------
-# Networks
-# ---------------------------------------------------------------------------
+# =============================================================================
+# Networks — Mạng nội bộ cho các service trong project
+# =============================================================================
 networks:
   blindbag_network:
     driver: bridge
