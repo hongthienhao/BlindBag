@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { getHealthCheck } from './services/healthCheckService'
 
 function App() {
   const [apiStatus, setApiStatus] = useState<any>(null)
@@ -8,15 +9,10 @@ function App() {
   useEffect(() => {
     const fetchHealthCheck = async () => {
       try {
-        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5252'
-        const response = await fetch(`${baseUrl}/api/healthcheck`)
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-        const data = await response.json()
+        const data = await getHealthCheck()
         setApiStatus(data)
       } catch (err: any) {
-        setError(err.message)
+        setError(err.message || 'An error occurred while fetching API')
       } finally {
         setLoading(false)
       }
