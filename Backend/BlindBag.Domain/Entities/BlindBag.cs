@@ -20,6 +20,7 @@ namespace BlindBag.Domain.Entities
         // Navigation properties
         public User Seller { get; set; } = null!;
         public Category Category { get; set; } = null!;
+        public ICollection<BlindBagVariation> Variations { get; set; } = new List<BlindBagVariation>();
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
     }

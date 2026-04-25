@@ -12,6 +12,7 @@ namespace BlindBag.Infrastructure.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<BlindBag.Domain.Entities.BlindBag> BlindBags { get; set; }
+        public DbSet<BlindBagVariation> BlindBagVariations { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Review> Reviews { get; set; }
@@ -71,6 +72,21 @@ namespace BlindBag.Infrastructure.Data
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("FK_BlindBags_Category");
+            });
+
+            // BlindBagVariation
+            modelBuilder.Entity<BlindBagVariation>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.ProbabilityWeight).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.ImageUrl).HasMaxLength(500);
+
+                entity.HasOne(d => d.BlindBag)
+                    .WithMany(p => p.Variations)
+                    .HasForeignKey(d => d.BlindBagId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_BlindBagVariations_BlindBag");
             });
 
             // Order
