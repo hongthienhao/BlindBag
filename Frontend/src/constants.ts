@@ -6,7 +6,7 @@ export const MYSTERY_BAGS: MysteryBag[] = [
     name: 'Túi Tân Thủ',
     price: 100,
     description: 'Perfect for beginners. Contains a selection of essential items to get you started on your journey.',
-    image: 'https://images.unsplash.com/photo-1549463253-15793081cb02?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1607344645271-6101c03dae77?auto=format&fit=crop&q=80&w=800',
     isNew: true,
     rarityDistribution: [
       { rarity: 'Common', probability: 60 },
@@ -19,7 +19,7 @@ export const MYSTERY_BAGS: MysteryBag[] = [
     name: 'Túi Chuyên Gia',
     price: 500,
     description: 'Designed for seasoned collectors. Higher chances of rare finds and exclusive limited-edition pieces.',
-    image: 'https://images.unsplash.com/photo-1513519245088-0e12902e15ca?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1578357041797-151ec5071167?auto=format&fit=crop&q=80&w=800',
     rarityDistribution: [
       { rarity: 'Common', probability: 30 },
       { rarity: 'Rare', probability: 50 },
@@ -87,7 +87,7 @@ export const MARKETPLACE_ITEMS: InventoryItem[] = [
     receivedAt: '2024-05-21',
     seller: 'Alex',
     price: 150,
-    image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80&w=800',
   },
   {
     id: 'm-2',
@@ -109,6 +109,6 @@ export const MARKETPLACE_ITEMS: InventoryItem[] = [
     receivedAt: '2024-05-21',
     seller: 'Trang',
     price: 1200,
-    image: 'https://images.unsplash.com/photo-1586717791821-3f44a563dc4c?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800',
   },
 ];

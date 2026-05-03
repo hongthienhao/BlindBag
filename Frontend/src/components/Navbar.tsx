@@ -1,10 +1,18 @@
-import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Bell, User, Wallet } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ShoppingBag, Bell, User, Wallet, LogOut } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  
+  const isLoggedIn = !!localStorage.getItem('jwt_token');
+
+  const handleLogout = () => {
+    localStorage.removeItem('jwt_token');
+    navigate('/login');
+  };
 
   if (isAuthPage) {
     return (
@@ -72,11 +80,21 @@ export default function Navbar() {
             <button className="p-2 text-gray-500 hover:bg-gray-50 rounded-full transition-colors">
               <Bell size={20} />
             </button>
-            <Link to="/login">
-              <button className="ml-2 bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm">
-                Login
+            {isLoggedIn ? (
+              <button 
+                onClick={handleLogout}
+                title="Đăng xuất"
+                className="ml-2 p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+              >
+                <LogOut size={20} />
               </button>
-            </Link>
+            ) : (
+              <Link to="/login">
+                <button className="ml-2 bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm">
+                  Đăng nhập
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       </div>

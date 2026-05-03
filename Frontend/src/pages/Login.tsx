@@ -50,8 +50,8 @@ export default function Login() {
     <div className="min-h-[calc(100vh-160px)] flex items-center justify-center p-6 bg-stone-50">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-10 flex flex-col gap-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold font-display text-gray-900 mb-2">Welcome Back</h1>
-          <p className="text-gray-500 font-medium">Sign in to your BlindBag account</p>
+          <h1 className="text-3xl font-bold font-display text-gray-900 mb-2">Chào mừng trở lại</h1>
+          <p className="text-gray-500 font-medium">Đăng nhập vào tài khoản BlindBag của bạn</p>
         </div>
 
         <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
@@ -70,7 +70,7 @@ export default function Login() {
               type="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder="Nhập email của bạn"
               className="w-full bg-white border border-gray-200 rounded-lg p-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-100 focus:border-slate-400 transition-all"
               required
             />
@@ -79,16 +79,16 @@ export default function Login() {
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
               <label className="text-xs font-bold font-sans text-gray-600 uppercase tracking-widest" htmlFor="password">
-                Password
+                Mật khẩu
               </label>
-              <Link to="#" className="text-xs font-medium text-slate-700 hover:underline">Forgot password?</Link>
+              <Link to="#" className="text-xs font-medium text-slate-700 hover:underline">Quên mật khẩu?</Link>
             </div>
             <input 
               id="password"
               type="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Enter your password"
+              placeholder="Nhập mật khẩu của bạn"
               className="w-full bg-white border border-gray-200 rounded-lg p-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-100 focus:border-slate-400 transition-all"
               required
             />
@@ -113,7 +113,7 @@ export default function Login() {
 
         <div className="text-center">
           <p className="text-sm text-gray-500 font-medium leading-relaxed">
-            Don't have an account? <Link to="/register" className="text-gray-900 font-bold hover:underline">Sign up here</Link>
+            Chưa có tài khoản? <Link to="/register" className="text-gray-900 font-bold hover:underline">Đăng ký tại đây</Link>
           </p>
         </div>
       </div>

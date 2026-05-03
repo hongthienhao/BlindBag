@@ -59,8 +59,8 @@ export default function Register() {
     <div className="min-h-[calc(100vh-160px)] flex items-center justify-center p-6 bg-stone-50">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-10 flex flex-col gap-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold font-display text-gray-900 mb-2">Create an Account</h1>
-          <p className="text-gray-500 font-medium">Join BlindBag Marketplace today.</p>
+          <h1 className="text-3xl font-bold font-display text-gray-900 mb-2">Tạo tài khoản mới</h1>
+          <p className="text-gray-500 font-medium">Tham gia BlindBag Marketplace ngay hôm nay.</p>
         </div>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -169,7 +169,7 @@ export default function Register() {
 
         <div className="text-center pt-6 border-t border-gray-100">
           <p className="text-sm text-gray-500 font-medium leading-relaxed">
-            Already have an account? <Link to="/login" className="text-gray-900 font-bold hover:underline">Log in</Link>
+            Đã có tài khoản? <Link to="/login" className="text-gray-900 font-bold hover:underline">Đăng nhập</Link>
           </p>
         </div>
       </div>

@@ -32,7 +32,7 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             className="text-4xl md:text-5xl font-bold font-display text-gray-900 mb-6"
           >
-            Discover the Unknown
+            Khám phá sự bí ẩn
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, x: -20 }}
@@ -40,16 +40,17 @@ export default function Home() {
             transition={{ delay: 0.1 }}
             className="text-lg text-gray-600 max-w-lg mb-8 leading-relaxed"
           >
-            Unbox exclusive, limited-edition items. Trust in the mystery, verify on the blockchain.
+            Mở hộp các vật phẩm độc quyền, phiên bản giới hạn. Tin tưởng vào sự bí ẩn, xác nhận trên blockchain.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
+            className="flex flex-wrap gap-4 items-center"
           >
             <Link to="/shop">
               <button className="bg-slate-700 text-white px-8 py-3 rounded-lg font-medium hover:bg-slate-800 transition-all shadow-sm inline-flex items-center gap-2 group">
-                Explore Marketplace
+                Khám phá thị trường
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </Link>
@@ -77,8 +78,8 @@ export default function Home() {
                   />
                </div>
             </div>
-            <h3 className="text-xl font-bold font-display text-gray-900 mb-2">Featured Drop</h3>
-            <p className="text-sm text-gray-500 font-medium">Series Alpha - 24h Remaining</p>
+            <h3 className="text-xl font-bold font-display text-gray-900 mb-2">Vật phẩm nổi bật</h3>
+            <p className="text-sm text-gray-500 font-medium">Series Alpha - Còn lại 24h</p>
           </motion.div>
           
           {/* Subtle background image or pattern */}

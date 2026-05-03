@@ -183,7 +183,7 @@ export default function Inventory() {
                     {ICON_MAP[sellingItem.type as keyof typeof ICON_MAP] || <BookOpen size={24} />}
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">SELECTED ITEM</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">VẬT PHẨM ĐÃ CHỌN</p>
                     <p className="font-bold text-gray-900">{sellingItem.name}</p>
                   </div>
                 </div>
