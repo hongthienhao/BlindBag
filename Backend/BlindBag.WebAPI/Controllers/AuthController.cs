@@ -41,5 +41,38 @@ namespace BlindBag.WebAPI.Controllers
                 return Conflict(new { message = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Đăng nhập và nhận JWT token.
+        /// </summary>
+        /// <param name="request">Email và Password của người dùng.</param>
+        /// <returns>JWT token kèm thông tin cơ bản của user.</returns>
+        /// <response code="200">Đăng nhập thành công, trả về token.</response>
+        /// <response code="400">Dữ liệu đầu vào không hợp lệ (thiếu Email / Password).</response>
+        /// <response code="401">Email hoặc mật khẩu không chính xác.</response>
+        /// <response code="403">Tài khoản đã bị vô hiệu hóa.</response>
+        [HttpPost("login")]
+        [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+        {
+            try
+            {
+                var result = await _authService.LoginAsync(request);
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                // Sai email hoặc password → 401
+                return Unauthorized(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Tài khoản bị vô hiệu hóa → 403
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            }
+        }
     }
 }

@@ -1,6 +1,9 @@
+using System.Text;
 using BlindBag.Application.Interfaces;
 using BlindBag.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,33 @@ builder.Services.AddCors(options =>
 // Configure Database
 builder.Services.AddDbContext<BlindBag.Infrastructure.Data.ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Cấu hình JWT Authentication
+var jwtSection = builder.Configuration.GetSection("Jwt");
+var secretKey = jwtSection["Key"]
+    ?? throw new InvalidOperationException("Jwt:Key chưa được cấu hình trong appsettings.json.");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme    = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer           = true,
+        ValidateAudience         = true,
+        ValidateLifetime         = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer              = jwtSection["Issuer"],
+        ValidAudience            = jwtSection["Audience"],
+        IssuerSigningKey         = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+        ClockSkew                = TimeSpan.Zero   // Không cho phép trễ thêm thời gian
+    };
+});
+
+builder.Services.AddAuthorization();
 
 // Đăng ký Application Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -60,6 +90,10 @@ app.UseHttpsRedirection();
 
 // Cấu hình CORS
 app.UseCors("AllowFrontend");
+
+// Middleware xác thực và phân quyền (thứ tự quan trọng: Auth trước Authorization)
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
