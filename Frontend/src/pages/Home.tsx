@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 // Custom Lucide Icon for Box (Inventory)
 const BoxIcon = ({ size = 24, className = "" }) => (
@@ -22,6 +23,8 @@ const BoxIcon = ({ size = 24, className = "" }) => (
 );
 
 export default function Home() {
+  const { user } = useAuth();
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
@@ -32,7 +35,7 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             className="text-4xl md:text-5xl font-bold font-display text-gray-900 mb-6"
           >
-            Khám phá sự bí ẩn
+            {user ? `Chào mừng ${user.fullName.split(' ')[0]} trở lại!` : 'Khám phá sự bí ẩn'}
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, x: -20 }}

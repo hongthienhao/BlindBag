@@ -1,16 +1,17 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingBag, Bell, User, Wallet, LogOut } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
   
-  const isLoggedIn = !!localStorage.getItem('jwt_token');
-
+  const { user, logout } = useAuth();
+  
   const handleLogout = () => {
-    localStorage.removeItem('jwt_token');
+    logout();
     navigate('/login');
   };
 
@@ -21,9 +22,18 @@ export default function Navbar() {
           <Link to="/" className="text-xl font-bold font-display tracking-tight text-gray-900">
             BlindBag
           </Link>
-          <button className="p-2 text-gray-500 hover:bg-gray-50 rounded-full transition-colors">
-            <User size={20} />
-          </button>
+          {user ? (
+            <Link to="/profile" className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+              <span className="text-sm font-bold text-gray-700">{user.fullName}</span>
+              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                <User size={16} />
+              </div>
+            </Link>
+          ) : (
+            <button className="p-2 text-gray-500 hover:bg-gray-50 rounded-full transition-colors">
+              <User size={20} />
+            </button>
+          )}
         </div>
       </header>
     );
@@ -80,7 +90,16 @@ export default function Navbar() {
             <button className="p-2 text-gray-500 hover:bg-gray-50 rounded-full transition-colors">
               <Bell size={20} />
             </button>
-            {isLoggedIn ? (
+            {user ? (
+              <Link to="/profile" className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+                <span className="text-sm font-bold text-gray-700 hidden sm:block">Chào, {user.fullName.split(' ')[0]}</span>
+                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                  <User size={16} />
+                </div>
+              </Link>
+            ) : null}
+            
+            {user ? (
               <button 
                 onClick={handleLogout}
                 title="Đăng xuất"
